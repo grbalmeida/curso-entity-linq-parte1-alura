@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
+using System.Xml.Linq;
 
 namespace AluraTunes
 {
@@ -8,7 +10,38 @@ namespace AluraTunes
     {
         static void Main(string[] args)
         {
-            LinqComJoins();
+            LinqToXml();
+        }
+
+        private static void LinqToXml()
+        {
+            XElement root = XElement.Load(@"..\..\Data\AluraTunes.xml");
+
+            var queryXML = from genero in root.Element("Generos").Elements("Genero")
+                           select genero;
+        
+            foreach (var genero in queryXML)
+            {
+                Console.WriteLine("{0}\t{1}", genero.Element("GeneroId").Value, genero.Element("Nome").Value);
+            }
+
+            var query = from genero in root.Element("Generos").Elements("Genero")
+                        join musica in root.Element("Musicas").Elements("Musica")
+                            on genero.Element("GeneroId").Value equals musica.Element("GeneroId").Value
+                        select new
+                        {
+                            Musica = musica.Element("Nome").Value,
+                            Genero = genero.Element("Nome").Value
+                        };
+
+            Console.WriteLine();
+
+            foreach (var musicaGenero in query)
+            {
+                Console.WriteLine("{0}\t{1}", musicaGenero.Musica, musicaGenero.Genero);
+            }
+
+            Console.ReadKey();
         }
 
         private static void LinqComJoins()
