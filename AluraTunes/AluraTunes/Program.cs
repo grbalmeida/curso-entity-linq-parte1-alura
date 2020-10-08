@@ -10,7 +10,38 @@ namespace AluraTunes
     {
         static void Main(string[] args)
         {
-            LinqToEntitiesSemJoin();
+            LinqToEntitiesRefinandoConsultas();
+        }
+
+        private static void LinqToEntitiesRefinandoConsultas()
+        {
+            using (var contexto = new AluraTunesEntities())
+            {                
+                GetFaixas(contexto, "Led Zeppelin", "");
+
+                Console.WriteLine();
+
+                GetFaixas(contexto, "Led Zeppelin", "Graffiti");
+            }
+
+            Console.ReadKey();
+        }
+
+        private static void GetFaixas(AluraTunesEntities contexto, string buscaArtista, string buscaAlbum)
+        {
+            var query = from faixa in contexto.Faixas
+                        where faixa.Album.Artista.Nome.Contains(buscaArtista)
+                        select faixa;
+
+            if (!string.IsNullOrEmpty(buscaAlbum))
+            {
+                query = query.Where(f => f.Album.Titulo.Contains(buscaAlbum));
+            }
+
+            foreach (var faixa in query)
+            {
+                Console.WriteLine("{0}\t{1}", faixa.Album.Titulo.PadRight(40), faixa.Nome);
+            }
         }
 
         private static void LinqToEntitiesSemJoin()
