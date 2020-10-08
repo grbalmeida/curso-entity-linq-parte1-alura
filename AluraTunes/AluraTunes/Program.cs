@@ -1,6 +1,7 @@
 ﻿using AluraTunes.Data;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -31,12 +32,9 @@ namespace AluraTunes
         {
             var query = from faixa in contexto.Faixas
                         where faixa.Album.Artista.Nome.Contains(buscaArtista)
+                        && (!string.IsNullOrEmpty(buscaAlbum) ? faixa.Album.Titulo.Contains(buscaAlbum) : true)
+                        orderby faixa.Album.Titulo, faixa.Nome descending
                         select faixa;
-
-            if (!string.IsNullOrEmpty(buscaAlbum))
-            {
-                query = query.Where(f => f.Album.Titulo.Contains(buscaAlbum));
-            }
 
             foreach (var faixa in query)
             {
