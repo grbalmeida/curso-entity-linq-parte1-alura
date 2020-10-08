@@ -10,7 +10,29 @@ namespace AluraTunes
     {
         static void Main(string[] args)
         {
-            LinqToEntitiesContextoJoinTakeLogSql();
+            LinqToEntitiesWhere();
+        }
+
+        private static void LinqToEntitiesWhere()
+        {
+            using (var contexto = new AluraTunesEntities())
+            {
+                var textoBusca = "Led";
+
+                contexto.Database.Log = Console.WriteLine;
+
+                var query = from artista in contexto.Artistas
+                            where artista.Nome.Contains(textoBusca)
+                            select artista;
+
+                foreach (var artista in query)
+                {
+                    Console.WriteLine("{0}\t{1}", artista.ArtistaId, artista.Nome);
+                }
+            }
+
+
+            Console.ReadKey();
         }
 
         private static void LinqToEntitiesContextoJoinTakeLogSql()
