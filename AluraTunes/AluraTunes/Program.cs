@@ -10,7 +10,26 @@ namespace AluraTunes
     {
         static void Main(string[] args)
         {
-            LinqToEntitiesWhere();
+            LinqToEntitiesSintaxeDeMetodo();
+        }
+
+        private static void LinqToEntitiesSintaxeDeMetodo()
+        {
+            using (var contexto = new AluraTunesEntities())
+            {
+                contexto.Database.Log = Console.WriteLine;
+
+                var textoBusca = "Led";
+
+                var query = contexto.Artistas.Where(a => a.Nome.Contains(textoBusca));
+
+                foreach (var artista in query)
+                {
+                    Console.WriteLine("{0}\t{1}", artista.ArtistaId, artista.Nome);
+                }
+            }
+
+            Console.ReadKey();
         }
 
         private static void LinqToEntitiesWhere()
