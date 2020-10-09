@@ -11,7 +11,34 @@ namespace AluraTunes
     {
         static void Main(string[] args)
         {
-            LinqToEntitiesMinMaxAvg();
+            LinqMetodosExtensao();
+        }
+
+        private static void LinqMetodosExtensao()
+        {
+            using (var contexto = new AluraTunesEntities())
+            {
+                contexto.Database.Log = Console.WriteLine;
+
+                var vendaMedia = contexto.NotasFiscais.Average(nf => nf.Total);
+
+                Console.WriteLine("Venda Média: {0}", vendaMedia);
+
+                var query = from notaFiscal in contexto.NotasFiscais
+                            select notaFiscal.Total;
+
+                var contagem = query.Count();
+
+                var queryOrdenada = query.OrderBy(total => total);
+
+                var elementoCentral = queryOrdenada.Skip(contagem / 2).First();
+
+                var mediana = elementoCentral;
+
+                Console.WriteLine("Mediana: {0}", mediana);
+            }
+
+            Console.ReadKey();
         }
 
         private static void LinqToEntitiesMinMaxAvg()
