@@ -11,7 +11,42 @@ namespace AluraTunes
     {
         static void Main(string[] args)
         {
-            LinqToEntitiesGroupBy();
+            LinqToEntitiesMinMaxAvg();
+        }
+
+        private static void LinqToEntitiesMinMaxAvg()
+        {
+            using (var contexto = new AluraTunesEntities())
+            {
+                contexto.Database.Log = Console.WriteLine;
+                
+                // 3 idas até o banco de dados
+
+                //var maiorVenda = contexto.NotasFiscais.Max(nf => nf.Total);
+                //var menorVenda = contexto.NotasFiscais.Min(nf => nf.Total);
+                //var vendaMedia = contexto.NotasFiscais.Average(nf => nf.Total);
+
+                //Console.WriteLine("A maior venda é de R$ {0}", maiorVenda);
+                //Console.WriteLine("A menor venda é de R$ {0}", menorVenda);
+                //Console.WriteLine("A venda média é de R$ {0}", vendaMedia);
+
+                var vendas = (from notaFiscal in contexto.NotasFiscais
+                             group notaFiscal by 1 into agrupado
+                             select new
+                             {
+                                 MaiorVenda = agrupado.Max(nf => nf.Total),
+                                 MenorVenda = agrupado.Min(nf => nf.Total),
+                                 VendaMedia = agrupado.Average(nf => nf.Total)
+                             }).Single();
+
+                // 1 ida até o banco de dados
+
+                Console.WriteLine("A maior venda é de R$ {0}", vendas.MaiorVenda);
+                Console.WriteLine("A menor venda é de R$ {0}", vendas.MenorVenda);
+                Console.WriteLine("A venda média é de R$ {0}", vendas.VendaMedia);
+            }
+
+            Console.ReadKey();
         }
 
         private static void LinqToEntitiesGroupBy()
