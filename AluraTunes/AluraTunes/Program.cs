@@ -11,7 +11,33 @@ namespace AluraTunes
     {
         static void Main(string[] args)
         {
-            LinqToEntitiesCount();
+            LinqToEntitiesSum();
+        }
+
+        private static void LinqToEntitiesSum()
+        {
+            using (var contexto = new AluraTunesEntities())
+            {
+                contexto.Database.Log = Console.WriteLine;
+
+                var query = from itemNotaFiscal in contexto.ItemNotasFiscais
+                            where itemNotaFiscal.Faixa.Album.Artista.Nome == "Led Zeppelin"
+                            select new
+                            {
+                                totalDoItem = itemNotaFiscal.Quantidade * itemNotaFiscal.PrecoUnitario
+                            };
+
+                //foreach (var itemNotaFiscal in query)
+                //{
+                //    Console.WriteLine(itemNotaFiscal.totalDoItem);
+                //}
+
+                var totalDoArtista = query.Sum(q => q.totalDoItem);
+
+                Console.WriteLine("Total do artista: R$ {0}", totalDoArtista);
+            }
+
+            Console.ReadKey();
         }
 
         private static void LinqToEntitiesCount()
