@@ -11,7 +11,37 @@ namespace AluraTunes
     {
         static void Main(string[] args)
         {
-            LinqToEntitiesSum();
+            LinqToEntitiesGroupBy();
+        }
+
+        private static void LinqToEntitiesGroupBy()
+        {
+            using (var contexto = new AluraTunesEntities())
+            {
+                contexto.Database.Log = Console.WriteLine;
+
+                var query = from itemNotaFiscal in contexto.ItemsNotasFiscal
+                            where itemNotaFiscal.Faixa.Album.Artista.Nome == "Led Zeppelin"
+                            group itemNotaFiscal by itemNotaFiscal.Faixa.Album into agrupado
+                            let vendasPorAlbum = agrupado.Sum(a => a.Quantidade * a.PrecoUnitario)
+                            orderby vendasPorAlbum descending
+                            select new
+                            {
+                                TituloDoAlbum = agrupado.Key.Titulo,
+                                TotalPorAlbum = vendasPorAlbum
+                            };
+
+                foreach (var agrupado in query)
+                {
+                    Console.WriteLine(
+                        "{0}\t{1}",
+                        agrupado.TituloDoAlbum.PadRight(40),
+                        agrupado.TotalPorAlbum
+                    );
+                }
+            }
+
+            Console.ReadKey();
         }
 
         private static void LinqToEntitiesSum()
@@ -20,7 +50,7 @@ namespace AluraTunes
             {
                 contexto.Database.Log = Console.WriteLine;
 
-                var query = from itemNotaFiscal in contexto.ItemNotasFiscais
+                var query = from itemNotaFiscal in contexto.ItemsNotasFiscal
                             where itemNotaFiscal.Faixa.Album.Artista.Nome == "Led Zeppelin"
                             select new
                             {
