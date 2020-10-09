@@ -11,7 +11,37 @@ namespace AluraTunes
     {
         static void Main(string[] args)
         {
-            LinqToEntitiesRefinandoConsultas();
+            LinqToEntitiesCount();
+        }
+
+        private static void LinqToEntitiesCount()
+        {
+            using (var contexto = new AluraTunesEntities())
+            {
+                contexto.Database.Log = Console.WriteLine;
+
+                var query = from faixa in contexto.Faixas
+                            where faixa.Album.Artista.Nome == "Led Zeppelin"
+                            select faixa;
+
+                //var quantidade = query.Count();
+
+                //Console.WriteLine("Led Zeppelin tem {0} músicas no banco de dados.", quantidade);
+
+                var quantidade = contexto.Faixas.Count();
+
+                Console.WriteLine("O banco de dados tem {0} faixas de música", quantidade);
+
+                quantidade = contexto.Faixas.Where(f => f.Album.Artista.Nome == "Led Zeppelin").Count();
+
+                Console.WriteLine("Led Zeppelin tem {0} músicas no banco de dados.", quantidade);
+
+                quantidade = contexto.Faixas.Count(f => f.Album.Artista.Nome == "Led Zeppelin");
+
+                Console.WriteLine("Led Zeppelin tem {0} músicas no banco de dados.", quantidade);
+            }
+
+            Console.ReadKey();
         }
 
         private static void LinqToEntitiesRefinandoConsultas()
