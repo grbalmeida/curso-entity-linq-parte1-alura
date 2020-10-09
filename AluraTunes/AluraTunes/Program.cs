@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Xml.Linq;
+using AluraTunes.Extensions;
 
 namespace AluraTunes
 {
@@ -11,7 +12,19 @@ namespace AluraTunes
     {
         static void Main(string[] args)
         {
-            LinqMetodosExtensao();
+            LinqMediana();
+        }
+
+        private static void LinqMediana()
+        {
+            using (var contexto = new AluraTunesEntities())
+            {
+                var mediana = contexto.NotasFiscais.Mediana(nf => nf.Total);
+
+                Console.WriteLine("Mediana: {0}", mediana);
+            }
+
+            Console.ReadKey();
         }
 
         private static void LinqMetodosExtensao()
